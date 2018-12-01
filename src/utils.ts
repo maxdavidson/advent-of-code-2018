@@ -61,3 +61,10 @@ export async function drain<T>(asyncIterable: AsyncIterable<T>): Promise<Array<T
 
   return items;
 }
+
+export function* matches(pattern: RegExp, text: string) {
+  let result: RegExpExecArray | null;
+  while ((result = pattern.exec(text)) !== null) {
+    yield result!;
+  }
+}
