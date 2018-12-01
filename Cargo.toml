@@ -5,5 +5,7 @@ authors = ["Max Davidson <davidsonmax@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+lazy_static = "1.2.0"
 num-bigint = "0.2.1"
 num-traits = "0.2.6"
+regex = "1.1.0"
