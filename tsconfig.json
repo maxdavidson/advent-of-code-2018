@@ -3,7 +3,7 @@
     /* Basic Options */
     "target": "esnext",
     "module": "commonjs",
-    "lib": ["es2018", "esnext.asynciterable", "esnext.symbol"],
+    "lib": ["es2018", "esnext.asynciterable", "esnext.symbol", "esnext.bigint"],
     "importHelpers": true,
 
     /* Strict Type-Checking Options */
