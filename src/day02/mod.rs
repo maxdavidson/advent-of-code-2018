@@ -2,7 +2,7 @@ use itertools::Itertools;
 use std::collections::HashMap;
 
 #[allow(dead_code)]
-pub fn part1(input: &str) -> u64 {
+pub fn part1_v1(input: &str) -> u64 {
     input
         .lines()
         .flat_map(|line| {
@@ -25,7 +25,31 @@ pub fn part1(input: &str) -> u64 {
 }
 
 #[allow(dead_code)]
-pub fn part2(input: &str) -> String {
+pub fn part1_v2(input: &str) -> u64 {
+    let mut twos = 0u64;
+    let mut threes = 0u64;
+
+    for line in input.lines() {
+        let mut freq = HashMap::new();
+
+        for c in line.chars() {
+            *freq.entry(c).or_insert(0u64) += 1;
+        }
+
+        for unique_freq in freq.values().unique() {
+            match *unique_freq {
+                2 => twos += 1,
+                3 => threes += 1,
+                _ => {}
+            }
+        }
+    }
+
+    twos * threes
+}
+
+#[allow(dead_code)]
+pub fn part2_v1(input: &str) -> String {
     input
         .lines()
         .tuple_combinations::<(_, _)>()
@@ -45,6 +69,29 @@ pub fn part2(input: &str) -> String {
         .expect("No solution found!")
 }
 
+#[allow(dead_code)]
+pub fn part2_v2(input: &str) -> String {
+    for (line_a, line_b) in input.lines().tuple_combinations::<(_, _)>() {
+        if line_a.len() != line_b.len() {
+            continue;
+        }
+
+        let mut common_chars = String::new();
+
+        for (c_a, c_b) in line_a.chars().zip(line_b.chars()) {
+            if c_a == c_b {
+                common_chars.push(c_a);
+            }
+        }
+
+        if common_chars.len() == line_a.len() - 1 {
+            return common_chars;
+        }
+    }
+
+    panic!("No solution found!")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -54,19 +101,36 @@ mod tests {
     #[test]
     fn part1_works() {
         assert_eq!(
-            part1("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
+            part1_v1("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
             12
         );
-        assert_eq!(part1(INPUT), 6175);
+        assert_eq!(part1_v1(INPUT), 6175);
     }
 
     #[test]
-    fn part2_works() {
+    fn part1_v2_works() {
         assert_eq!(
-            part2("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
-            "fgij"
+            part1_v2("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
+            12
         );
-        assert_eq!(part2(INPUT), "asgwjcmzredihqoutcylvzinx");
+        assert_eq!(part1_v2(INPUT), 6175);
     }
 
+    #[test]
+    fn part2_v1_works() {
+        assert_eq!(
+            part2_v1("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
+            "fgij"
+        );
+        assert_eq!(part2_v1(INPUT), "asgwjcmzredihqoutcylvzinx");
+    }
+
+    #[test]
+    fn part2_v2_works() {
+        assert_eq!(
+            part2_v2("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
+            "fgij"
+        );
+        assert_eq!(part2_v2(INPUT), "asgwjcmzredihqoutcylvzinx");
+    }
 }
