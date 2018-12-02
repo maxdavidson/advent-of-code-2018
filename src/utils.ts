@@ -96,3 +96,110 @@ export function* cycle<T>(createIterable: () => Iterable<T>) {
     yield* createIterable();
   }
 }
+
+export function* split(input: string, separator: string): Iterable<string> {
+  // Special case for empty strings, to avoid infinite loop
+  if (separator === '') {
+    yield* input;
+    return;
+  }
+
+  let currentIndex = 0;
+  let nextIndex: number;
+
+  while ((nextIndex = input.indexOf(separator, currentIndex)) !== -1) {
+    yield input.slice(currentIndex, nextIndex);
+    currentIndex = nextIndex + separator.length;
+  }
+
+  yield input.slice(currentIndex);
+}
+
+export function lines(input: string, lineEnding = '\n'): Iterable<string> {
+  return split(input, lineEnding);
+}
+
+export function chars(input: string): Iterable<string> {
+  return input;
+}
+
+function identity<T>(value: T) {
+  return value;
+}
+
+export function unique<T>(iterable: Iterable<T>) {
+  return uniqueBy(iterable, identity);
+}
+
+export function* uniqueBy<T, U, This = undefined>(
+  iterable: Iterable<T>,
+  computeKey: (this: This, value: T) => U,
+  thisArg?: This,
+) {
+  const seen = new Set();
+
+  for (const value of iterable) {
+    const key = computeKey.call(thisArg!, value);
+    if (!seen.has(key)) {
+      seen.add(key);
+      yield value;
+    }
+  }
+}
+
+const createIterator = <T>(obj: Iterable<T>) => obj[Symbol.iterator]();
+const getNext = <T>(it: Iterator<T>) => it.next();
+const getValue = <T>(result: IteratorResult<T>) => result.value;
+const isDone = <T>(result: IteratorResult<T>) => result.done;
+
+class ZipIterator<Ts extends unknown[]> implements Iterator<Ts> {
+  constructor(private readonly iterators: { [K in keyof Ts]: Iterator<Ts[K]> }) {}
+
+  next() {
+    const results = this.iterators.map(getNext);
+    return {
+      value: results.map(getValue) as Ts,
+      done: results.some(isDone),
+    };
+  }
+}
+
+export function zip<Ts extends unknown[]>(...iterables: { [K in keyof Ts]: Iterable<Ts[K]> }): Iterable<Ts> {
+  return {
+    [Symbol.iterator]() {
+      return new ZipIterator<Ts>(Array.from(iterables, createIterator) as any);
+    },
+  };
+}
+
+export type Tuple<T, N extends number> = {
+  0: [];
+  1: [T];
+  2: [T, T];
+  3: [T, T, T];
+  4: [T, T, T, T];
+  5: [T, T, T, T, T];
+  [fallback: number]: T[];
+}[N];
+
+function* combinationsHelper<T, N extends number>(
+  array: ReadonlyArray<T>,
+  length: N,
+  visitedIndices: ReadonlyArray<number>,
+): IterableIterator<Tuple<T, N>> {
+  if (length <= 0) {
+    yield [];
+  } else {
+    for (const [index, head] of array.entries()) {
+      if (!visitedIndices.includes(index)) {
+        for (const tail of combinationsHelper(array, length - 1, [...visitedIndices, index])) {
+          yield [head, ...tail];
+        }
+      }
+    }
+  }
+}
+
+export function combinations<T, N extends number>(iterable: Iterable<T>, length: N) {
+  return combinationsHelper(Array.from(iterable), length, []);
+}

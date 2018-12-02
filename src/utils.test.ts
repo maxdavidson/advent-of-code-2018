@@ -1,4 +1,4 @@
-import { matches } from './utils';
+import { matches, combinations, split, unique, uniqueBy, zip } from './utils';
 
 test('matches', () => {
   const regex = /\d/g;
@@ -25,4 +25,29 @@ test('matches', () => {
     secondIt.throw!(new RangeError());
   }).toThrow(RangeError);
   expect(regex.lastIndex).toBe(0);
+});
+
+test('combinations', () => {
+  expect(new Set(combinations('ABC'.split(''), 2))).toEqual(
+    new Set([['A', 'B'], ['A', 'C'], ['B', 'A'], ['B', 'C'], ['C', 'A'], ['C', 'B']]),
+  );
+});
+
+test('unique', () => {
+  expect(Array.from(unique(['a', 'a', 'b']))).toEqual(['a', 'b']);
+});
+
+test('uniqueBy', () => {
+  expect(Array.from(uniqueBy(['aa', 'ab', 'b'], value => value.length))).toEqual(['aa', 'b']);
+});
+
+test('zip', () => {
+  expect(Array.from(zip('AB', 'CD'))).toEqual([['A', 'C'], ['B', 'D']]);
+});
+
+test('split', () => {
+  const testStr = 'hello world';
+
+  expect(Array.from(split(testStr, ''))).toEqual(testStr.split(''));
+  expect(Array.from(split(testStr, 'l'))).toEqual(testStr.split('l'));
 });
