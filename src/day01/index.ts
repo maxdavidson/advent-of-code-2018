@@ -1,38 +1,24 @@
-import { matches } from '../utils';
+import { bigints, cycle } from '../utils';
 
-function* numbers(input: string) {
-  for (const [result] of matches(/(-|\+)?\d+/g, input)) {
-    try {
-      yield BigInt(result);
-    } catch {}
-  }
-}
-
-function* cycle<T>(createIterable: () => Iterable<T>) {
-  for (;;) {
-    yield* createIterable();
-  }
-}
-
-export function part1(input: string): string {
+export function part1(input: string) {
   let sum = 0n;
 
-  for (const number of numbers(input)) {
-    sum += number;
+  for (const num of bigints(input)) {
+    sum += num;
   }
   
-  return sum.toString();
+  return sum;
 }
 
-export function part2(input: string): string {
+export function part2(input: string) {
   let sum = 0n;
-  const seen = new Set<bigint>([sum]);
+  const seen = new Set([sum]);
   
-  for (const number of cycle(() => numbers(input))) {
-    sum += number;
+  for (const num of cycle(() => bigints(input))) {
+    sum += num;
 
     if (seen.has(sum)) {
-      return sum.toString();
+      return sum;
     }
 
     seen.add(sum);
