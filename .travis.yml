@@ -1,0 +1,12 @@
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    # It doesn't yet work on stable
+    - rust: stable
+    - rust: nightly
+  fast_finish: true
+cache: cargo
