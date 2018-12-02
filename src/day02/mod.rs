@@ -1,0 +1,72 @@
+use itertools::Itertools;
+use std::collections::HashMap;
+
+#[allow(dead_code)]
+pub fn part1(input: &str) -> u64 {
+    input
+        .lines()
+        .flat_map(|line| {
+            line.chars()
+                .fold(HashMap::<_, u64>::new(), |mut freq, x| {
+                    *freq.entry(x).or_insert(0) += 1;
+                    freq
+                })
+                .into_iter()
+                .map(|(_, count)| count)
+                .unique()
+        })
+        .fold(HashMap::<_, u64>::new(), |mut freq, x| {
+            *freq.entry(x).or_insert(0) += 1;
+            freq
+        })
+        .into_iter()
+        .filter_map(|(k, v)| if k == 2 || k == 3 { Some(v) } else { None })
+        .product()
+}
+
+#[allow(dead_code)]
+pub fn part2(input: &str) -> String {
+    input
+        .lines()
+        .tuple_combinations::<(_, _)>()
+        .find_map(|(line_a, line_b)| {
+            let common_chars = line_a
+                .chars()
+                .zip_eq(line_b.chars())
+                .filter_map(|(c_a, c_b)| if c_a == c_b { Some(c_a) } else { None })
+                .collect::<String>();
+
+            if common_chars.len() == line_a.len() - 1 {
+                Some(common_chars)
+            } else {
+                None
+            }
+        })
+        .expect("No solution found!")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &'static str = include_str!("input");
+
+    #[test]
+    fn part1_works() {
+        assert_eq!(
+            part1("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
+            12
+        );
+        assert_eq!(part1(INPUT), 6175);
+    }
+
+    #[test]
+    fn part2_works() {
+        assert_eq!(
+            part2("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
+            "fgij"
+        );
+        assert_eq!(part2(INPUT), "asgwjcmzredihqoutcylvzinx");
+    }
+
+}
