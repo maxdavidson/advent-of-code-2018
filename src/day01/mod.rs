@@ -1,6 +1,5 @@
 use lazy_static::lazy_static;
-use num_bigint::BigInt;
-use num_traits::Zero;
+use num::{BigInt, Zero};
 use regex::Regex;
 use std::collections::HashSet;
 use std::iter::Iterator;
