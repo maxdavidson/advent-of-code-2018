@@ -185,21 +185,20 @@ export type Tuple<T, N extends number> = {
 function* combinationsHelper<T, N extends number>(
   array: ReadonlyArray<T>,
   length: N,
-  visitedIndices: ReadonlyArray<number>,
+  startIndex: number,
 ): IterableIterator<Tuple<T, N>> {
   if (length <= 0) {
     yield [];
   } else {
-    for (const [index, head] of array.entries()) {
-      if (!visitedIndices.includes(index)) {
-        for (const tail of combinationsHelper(array, length - 1, [...visitedIndices, index])) {
-          yield [head, ...tail];
-        }
+    for (let fixedIndex = startIndex; fixedIndex < array.length - length + 1; ++fixedIndex) {
+      for (const tail of combinationsHelper(array, length - 1, fixedIndex + 1)) {
+        yield [array[fixedIndex], ...tail];
       }
     }
   }
 }
 
 export function combinations<T, N extends number>(iterable: Iterable<T>, length: N) {
-  return combinationsHelper(Array.from(iterable), length, []);
+  const array = Array.from(iterable);
+  return combinationsHelper(array, length, 0);
 }

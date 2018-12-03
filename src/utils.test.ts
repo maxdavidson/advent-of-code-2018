@@ -1,4 +1,4 @@
-import { matches, combinations, split, unique, uniqueBy, zip } from './utils';
+import { matches, combinations, split, unique, uniqueBy, zip, chars } from './utils';
 
 test('matches', () => {
   const regex = /\d/g;
@@ -28,8 +28,22 @@ test('matches', () => {
 });
 
 test('combinations', () => {
-  expect(new Set(combinations('ABC'.split(''), 2))).toEqual(
-    new Set([['A', 'B'], ['A', 'C'], ['B', 'A'], ['B', 'C'], ['C', 'A'], ['C', 'B']]),
+  expect(new Set(combinations(chars('ABC'), 2))).toEqual(new Set([['A', 'B'], ['A', 'C'], ['B', 'C']]));
+  expect(new Set(combinations(chars('ABC'), 3))).toEqual(new Set([['A', 'B', 'C']]));
+
+  expect(new Set(combinations(chars('ABCDE'), 3))).toEqual(
+    new Set([
+      ['A', 'B', 'C'],
+      ['A', 'B', 'D'],
+      ['A', 'B', 'E'],
+      ['A', 'C', 'D'],
+      ['A', 'C', 'E'],
+      ['A', 'D', 'E'],
+      ['B', 'C', 'D'],
+      ['B', 'C', 'E'],
+      ['B', 'D', 'E'],
+      ['C', 'D', 'E'],
+    ]),
   );
 });
 
