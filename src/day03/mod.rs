@@ -2,15 +2,23 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 use std::iter::Iterator;
-use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug)]
 struct Claim {
     id: u32,
     left: u32,
     top: u32,
     width: u32,
     height: u32,
+}
+
+impl Claim {
+    fn overlaps(&self, other: &Claim) -> bool {
+        self.left < other.left + other.width
+            && self.left + self.width > other.left
+            && self.top < other.top + other.height
+            && self.top + self.height > other.top
+    }
 }
 
 fn claims_iter<'a>(input: &'a str) -> impl Iterator<Item = Claim> + 'a {
@@ -20,24 +28,18 @@ fn claims_iter<'a>(input: &'a str) -> impl Iterator<Item = Claim> + 'a {
 
     PATTERN.captures_iter(input).filter_map(|caps| {
         if let (Some(id), Some(left), Some(top), Some(width), Some(height)) = (
-            caps.get(1).and_then(|c| u32::from_str(c.as_str()).ok()),
-            caps.get(2).and_then(|c| u32::from_str(c.as_str()).ok()),
-            caps.get(3).and_then(|c| u32::from_str(c.as_str()).ok()),
-            caps.get(4).and_then(|c| u32::from_str(c.as_str()).ok()),
-            caps.get(5).and_then(|c| u32::from_str(c.as_str()).ok()),
+            caps.get(1).and_then(|m| m.as_str().parse().ok()),
+            caps.get(2).and_then(|m| m.as_str().parse().ok()),
+            caps.get(3).and_then(|m| m.as_str().parse().ok()),
+            caps.get(4).and_then(|m| m.as_str().parse().ok()),
+            caps.get(5).and_then(|m| m.as_str().parse().ok()),
         ) {
             #[cfg_attr(rustfmt, rustfmt::skip)]
-                Some(Claim { id, left, top, width, height })
+            Some(Claim { id, left, top, width, height })
         } else {
             None
         }
     })
-}
-
-fn claim_coords_iter(claim: &Claim) -> impl Iterator<Item = (u32, u32)> {
-    #[cfg_attr(rustfmt, rustfmt::skip)]
-    let Claim { left, top, width, height, .. } = *claim;
-    (left..left + width).flat_map(move |x| (top..top + height).map(move |y| (x, y)))
 }
 
 #[allow(dead_code)]
@@ -58,27 +60,22 @@ pub fn part1(input: &str) -> usize {
 
 #[allow(dead_code)]
 pub fn part2(input: &str) -> u32 {
-    let mut map: HashMap<(u32, u32), u32> = HashMap::new();
+    // Pre-collect the claims, since we need to access them very frequently
+    let claims: Vec<Claim> = claims_iter(input).collect();
 
-    for claim in claims_iter(input) {
-        for coord in claim_coords_iter(&claim) {
-            *map.entry(coord).or_insert(0) += 1;
-        }
-    }
-
-    'claim: for claim in claims_iter(input) {
-        for coord in claim_coords_iter(&claim) {
-            if let Some(overlaps) = map.get(&coord) {
-                if *overlaps >= 2 {
+    'claim: for (i, claim_a) in claims.iter().enumerate() {
+        for (j, claim_b) in claims.iter().enumerate() {
+            if i != j {
+                if claim_a.overlaps(claim_b) {
                     continue 'claim;
                 }
             }
         }
 
-        return claim.id;
+        return claim_a.id;
     }
 
-    panic!("No solution found!");
+    panic!("No solution found!")
 }
 
 #[cfg(test)]
