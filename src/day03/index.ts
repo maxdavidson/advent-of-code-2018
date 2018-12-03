@@ -30,6 +30,15 @@ function* claimCoordinates({ left, top, width, height }: Claim) {
   }
 }
 
+function overlaps(claimA: Claim, claimB: Claim) {
+  return (
+    claimA.left < claimB.left + claimB.width &&
+    claimA.left + claimA.width > claimB.left &&
+    claimA.top < claimB.top + claimB.height &&
+    claimA.top + claimA.height > claimB.top
+  );
+}
+
 export function part1(input: string) {
   const map = new Map<string, number>();
 
@@ -42,8 +51,8 @@ export function part1(input: string) {
 
   let sum = 0;
 
-  for (const overlaps of map.values()) {
-    if (overlaps >= 2) {
+  for (const overlapCount of map.values()) {
+    if (overlapCount >= 2) {
       sum += 1;
     }
   }
@@ -52,28 +61,17 @@ export function part1(input: string) {
 }
 
 export function part2(input: string) {
-  const map = new Map<string, Set<number>>();
+  // Pre-collect the claims, since we need to access them very frequently
+  const claimsArray = Array.from(claims(input));
 
-  for (const claim of claims(input)) {
-    for (const { x, y } of claimCoordinates(claim)) {
-      const key = `${x},${y}`;
-      if (!map.has(key)) {
-        map.set(key, new Set());
-      }
-      map.get(key)!.add(claim.id);
-    }
-  }
-
-  claim: for (const claim of claims(input)) {
-    for (const { x, y } of claimCoordinates(claim)) {
-      const key = `${x},${y}`;
-
-      if (map.get(key)!.size > 1) {
-        continue claim;
+  claimsLoop: for (let i = 0; i < claimsArray.length; ++i) {
+    for (let j = 0; j < claimsArray.length; ++j) {
+      if (i != j && overlaps(claimsArray[i], claimsArray[j])) {
+        continue claimsLoop;
       }
     }
 
-    return claim.id;
+    return claimsArray[i].id;
   }
 
   throw new Error('No solution found!');
