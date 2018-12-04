@@ -147,6 +147,39 @@ export function* uniqueBy<T, U, This = undefined>(
   }
 }
 
+export function maxBy<T>(iterable: Iterable<T>, getValue: (value: T) => number) {
+  let maxValue = -Infinity;
+  let maxItem: T | undefined = undefined;
+
+  for (const item of iterable) {
+    const value = getValue(item);
+    if (maxValue < value) {
+      maxValue = value;
+      maxItem = item;
+    }
+  }
+
+  return maxItem;
+}
+
+export function* range(fromInclusive: number, toExclusive: number) {
+  for (let i = fromInclusive; i < toExclusive; ++i) {
+    yield i;
+  }
+}
+
+export function sum(array: ArrayLike<number>): number {
+  let sum = 0;
+  for (let i = 0; i < array.length; ++i) {
+    sum += array[i];
+  }
+  return sum;
+}
+
+export function createComparator<T>(extract: (value: T) => number) {
+  return (valueA: T, valueB: T) => extract(valueA) - extract(valueB);
+}
+
 const createIterator = <T>(obj: Iterable<T>) => obj[Symbol.iterator]();
 const getNext = <T>(it: Iterator<T>) => it.next();
 const getValue = <T>(result: IteratorResult<T>) => result.value;
