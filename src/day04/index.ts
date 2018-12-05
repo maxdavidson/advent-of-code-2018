@@ -1,4 +1,4 @@
-import { lines, maxBy, sum, createComparator } from '../utils';
+import { lines, maxBy, sum, createComparator, cartesianProduct, range } from '../utils';
 
 const enum ActionType {
   BeginShift,
@@ -10,6 +10,17 @@ type Action =
   | { type: ActionType.BeginShift; date: Date; id: number }
   | { type: ActionType.FallAsleep; date: Date }
   | { type: ActionType.WakeUp; date: Date };
+
+const enum StateType {
+  Vacant,
+  Working,
+  Sleeping,
+}
+
+type State =
+  | { type: StateType.Vacant }
+  | { type: StateType.Working; date: Date; id: number }
+  | { type: StateType.Sleeping; date: Date; id: number };
 
 function* entries(input: string): IterableIterator<Action> {
   for (const line of lines(input)) {
@@ -35,69 +46,51 @@ const dateComparator = createComparator<Action>(action => action.date.getTime())
 
 function computeSleepStats(input: string) {
   const actions = Array.from(entries(input)).sort(dateComparator);
-  const sleepStats = new Map<number, Uint32Array>();
+  const stats = new Map<number, Uint32Array>();
 
-  let currentGuardId: number | undefined = undefined;
-  let fellAsleepDate: Date | undefined = undefined;
+  let state: State = { type: StateType.Vacant };
 
   for (const action of actions) {
-    switch (action.type) {
-      case ActionType.BeginShift: {
-        fellAsleepDate = undefined;
-        currentGuardId = action.id;
-        break;
+    if (action.type === ActionType.BeginShift) {
+      const { id, date } = action;
+      state = { type: StateType.Working, date, id };
+    } else if (action.type === ActionType.FallAsleep && state.type === StateType.Working) {
+      // @ts-ignore
+      const { id } = state;
+      const { date } = action;
+      state = { type: StateType.Sleeping, date, id };
+    } else if (action.type === ActionType.WakeUp && state.type === StateType.Sleeping) {
+      // @ts-ignore
+      const { id, date: sleepDate } = state;
+      const { date: wakeDate } = action;
+
+      if (!stats.has(id)) {
+        stats.set(id, new Uint32Array(60));
       }
 
-      case ActionType.FallAsleep: {
-        fellAsleepDate = action.date;
-        break;
+      const guardStats = stats.get(id)!;
+
+      for (
+        let currentDate = sleepDate;
+        currentDate.getTime() < wakeDate.getTime();
+        currentDate = new Date(currentDate.getTime() + 60_000)
+      ) {
+        guardStats[currentDate.getMinutes()] += 1;
       }
 
-      case ActionType.WakeUp: {
-        if (currentGuardId === undefined || fellAsleepDate === undefined) {
-          continue;
-        }
-
-        if (!sleepStats.has(currentGuardId)) {
-          sleepStats.set(currentGuardId, new Uint32Array(60));
-        }
-
-        const guardStats = sleepStats.get(currentGuardId!)!;
-        const wokeUpDate = action.date;
-
-        for (
-          let date = fellAsleepDate;
-          date.getTime() < wokeUpDate.getTime();
-          date = new Date(date.getTime() + 60_000)
-        ) {
-          guardStats[date.getMinutes()] += 1;
-        }
-
-        fellAsleepDate = undefined;
-        break;
-      }
+      state = { type: StateType.Working, date: wakeDate, id };
     }
   }
 
-  return sleepStats;
+  return stats;
 }
 
 export function part1(input: string) {
   const sleepStats = computeSleepStats(input);
 
-  const result = maxBy(sleepStats, ([_, guardStats]) => sum(guardStats));
+  const [bestGuardId, bestGuardStats] = maxBy(sleepStats, ([_, guardStats]) => sum(guardStats))!;
 
-  if (result === undefined) {
-    throw new Error('No solution found!');
-  }
-
-  const [bestGuardId, bestGuardStats] = result;
-
-  const bestMinute = maxBy(bestGuardStats.keys(), i => bestGuardStats[i]);
-
-  if (bestMinute === undefined) {
-    throw new Error('No solution found!');
-  }
+  const [bestMinute, _] = maxBy(bestGuardStats.entries(), ([_, value]) => value)!;
 
   return bestGuardId * bestMinute;
 }
@@ -105,22 +98,10 @@ export function part1(input: string) {
 export function part2(input: string) {
   const sleepStats = computeSleepStats(input);
 
-  let bestGuard: number | undefined = undefined;
-  let bestMinute: number | undefined = undefined;
-  let mostSleep = -Infinity;
+  const [bestMinute, [bestGuardId, _]] = maxBy(
+    cartesianProduct(range(0, 60), sleepStats),
+    ([i, [_, guardStats]]) => guardStats[i],
+  )!;
 
-  for (let i = 0; i < 60; ++i) {
-    const [guardId, guardStats] = maxBy(sleepStats, ([_, guardStats]) => guardStats[i])!;
-    if (mostSleep < guardStats[i]) {
-      mostSleep = guardStats[i];
-      bestMinute = i;
-      bestGuard = guardId;
-    }
-  }
-
-  if (bestGuard === undefined || bestMinute === undefined) {
-    throw new Error('No solution found!');
-  }
-
-  return bestGuard * bestMinute;
+  return bestGuardId * bestMinute;
 }

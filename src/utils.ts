@@ -235,3 +235,18 @@ export function combinations<T, N extends number>(iterable: Iterable<T>, length:
   const array = Array.from(iterable);
   return combinationsHelper(array, length, 0);
 }
+
+export function* cartesianProduct<Tuple extends unknown[]>(
+  ...iterables: { [N in keyof Tuple]: Iterable<Tuple[N]> }
+): IterableIterator<Tuple> {
+  if (iterables.length === 0) {
+    yield ([] as unknown) as Tuple;
+  } else {
+    const [headIterable, ...tailIterables] = iterables;
+    for (const head of headIterable) {
+      for (const tail of cartesianProduct(...tailIterables)) {
+        yield ([head, ...tail] as unknown) as Tuple;
+      }
+    }
+  }
+}
