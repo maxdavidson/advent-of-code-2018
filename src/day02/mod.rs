@@ -100,37 +100,25 @@ mod tests {
 
     #[test]
     fn part1_works() {
-        assert_eq!(
-            part1_v1("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
-            12
-        );
+        assert_eq!(part1_v1("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"), 12);
         assert_eq!(part1_v1(INPUT), 6175);
     }
 
     #[test]
     fn part1_v2_works() {
-        assert_eq!(
-            part1_v2("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"),
-            12
-        );
+        assert_eq!(part1_v2("abcdef\nbababc\nabbcde\nabcccd\naabcdd\nabcdee\nababab"), 12);
         assert_eq!(part1_v2(INPUT), 6175);
     }
 
     #[test]
     fn part2_v1_works() {
-        assert_eq!(
-            part2_v1("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
-            "fgij"
-        );
+        assert_eq!(part2_v1("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"), "fgij");
         assert_eq!(part2_v1(INPUT), "asgwjcmzredihqoutcylvzinx");
     }
 
     #[test]
     fn part2_v2_works() {
-        assert_eq!(
-            part2_v2("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"),
-            "fgij"
-        );
+        assert_eq!(part2_v2("abcde\nfghij\nklmno\npqrst\nfguij\naxcye\nwvxyz"), "fgij");
         assert_eq!(part2_v2(INPUT), "asgwjcmzredihqoutcylvzinx");
     }
 }

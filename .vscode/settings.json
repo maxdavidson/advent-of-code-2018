@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
   "rust.all_features": true,
-  "rust-client.rls-name": "rls"
+  "rust-client.rls-name": "rls",
+  "editor.rulers": [100]
 }

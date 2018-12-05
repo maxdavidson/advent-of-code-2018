@@ -10,9 +10,7 @@ fn iter_nums<'a, T: FromStr>(input: &'a str) -> impl Iterator<Item = T> + 'a {
         static ref NUMBERS: Regex = Regex::new(r"(-|\+)?\d+").unwrap();
     }
 
-    NUMBERS
-        .find_iter(input)
-        .filter_map(|chars| chars.as_str().parse::<T>().ok())
+    NUMBERS.find_iter(input).filter_map(|chars| chars.as_str().parse::<T>().ok())
 }
 
 #[allow(dead_code)]

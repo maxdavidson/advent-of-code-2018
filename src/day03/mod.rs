@@ -34,7 +34,6 @@ fn claims_iter<'a>(input: &'a str) -> impl Iterator<Item = Claim> + 'a {
             caps.get(4).and_then(|m| m.as_str().parse().ok()),
             caps.get(5).and_then(|m| m.as_str().parse().ok()),
         ) {
-            #[cfg_attr(rustfmt, rustfmt::skip)]
             Some(Claim { id, left, top, width, height })
         } else {
             None
@@ -46,7 +45,6 @@ fn claims_iter<'a>(input: &'a str) -> impl Iterator<Item = Claim> + 'a {
 pub fn part1(input: &str) -> usize {
     let mut map: HashMap<(u32, u32), u32> = HashMap::new();
 
-    #[cfg_attr(rustfmt, rustfmt::skip)]
     for Claim { left, top, width, height, .. } in claims_iter(input) {
         for x in left..left + width {
             for y in top..top + height {
