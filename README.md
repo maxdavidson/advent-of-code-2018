@@ -4,4 +4,4 @@
 
 Solutions to [Advent of Code 2018](https://adventofcode.com/2018).
 
-This project uses [Rust 2018](https://hacks.mozilla.org/2018/12/rust-2018-is-here/), which requires Rust 1.31.0 or later.
+This project uses [Rust 2018](https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html), which requires Rust 1.31.0 or later.
