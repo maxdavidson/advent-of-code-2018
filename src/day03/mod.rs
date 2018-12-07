@@ -27,17 +27,13 @@ fn claims_iter<'a>(input: &'a str) -> impl Iterator<Item = Claim> + 'a {
     }
 
     PATTERN.captures_iter(input).filter_map(|caps| {
-        if let (Some(id), Some(left), Some(top), Some(width), Some(height)) = (
-            caps.get(1).and_then(|m| m.as_str().parse().ok()),
-            caps.get(2).and_then(|m| m.as_str().parse().ok()),
-            caps.get(3).and_then(|m| m.as_str().parse().ok()),
-            caps.get(4).and_then(|m| m.as_str().parse().ok()),
-            caps.get(5).and_then(|m| m.as_str().parse().ok()),
-        ) {
-            Some(Claim { id, left, top, width, height })
-        } else {
-            None
-        }
+        Some(Claim {
+            id: caps.get(1)?.as_str().parse().ok()?,
+            left: caps.get(2)?.as_str().parse().ok()?,
+            top: caps.get(3)?.as_str().parse().ok()?,
+            width: caps.get(4)?.as_str().parse().ok()?,
+            height: caps.get(5)?.as_str().parse().ok()?,
+        })
     })
 }
 
