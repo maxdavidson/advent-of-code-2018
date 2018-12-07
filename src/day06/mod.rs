@@ -1,3 +1,6 @@
+use itertools::Itertools;
+use num::abs;
+use std::collections::HashMap;
 use std::iter::Iterator;
 
 fn coords_iter<'a>(input: &'a str) -> impl Iterator<Item = (i32, i32)> + 'a {
@@ -14,15 +17,10 @@ fn coords_iter<'a>(input: &'a str) -> impl Iterator<Item = (i32, i32)> + 'a {
 }
 
 fn manhattan_distance((x0, y0): (i32, i32), (x1, y1): (i32, i32)) -> i32 {
-    let x = if x1 > x0 { x1 - x0 } else { x0 - x1 };
-    let y = if y1 > y0 { y1 - y0 } else { y0 - y1 };
-    x + y
+    abs(x1 - x0) + abs(y1 - y0)
 }
 
 pub fn part1(input: &str) -> usize {
-    use itertools::Itertools;
-    use std::collections::HashMap;
-
     let coords = coords_iter(input).collect::<Vec<_>>();
 
     let (min_x, max_x) = coords.iter().map(|(x, _)| *x).minmax().into_option().unwrap();
@@ -80,8 +78,6 @@ pub fn part1(input: &str) -> usize {
 }
 
 pub fn part2(input: &str, region_size: i32) -> usize {
-    use itertools::Itertools;
-
     let coords = coords_iter(input).collect::<Vec<_>>();
 
     let (min_x, max_x) = coords.iter().map(|(x, _)| *x).minmax().into_option().unwrap();
