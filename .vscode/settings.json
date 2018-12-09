@@ -1,6 +1,5 @@
 {
   "editor.formatOnSave": true,
-  "rust.all_features": true,
-  "rust-client.rls-name": "rls",
-  "editor.rulers": [100]
+  "editor.rulers": [100],
+  "lldb.executable": "rust-lldb",
 }
