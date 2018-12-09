@@ -24,7 +24,7 @@ impl<T> Rotate<isize> for VecDeque<T> {
 
 pub fn max_score(player_count: usize, last_marble_value: usize) -> usize {
   let mut player_scores = vec![0; player_count];
-  let mut marbles = VecDeque::new();
+  let mut marbles = VecDeque::with_capacity(last_marble_value);
 
   marbles.push_front(0);
 
