@@ -20,7 +20,7 @@ impl Task {
     pub fn required_time(&self) -> u32 {
         let mut value = [0u8; 4];
         self.0.encode_utf8(&mut value);
-        value[0] as u32 - 0x40
+        u32::from(value[0]) - 0x40
     }
 
     pub fn value(&self) -> char {
@@ -168,8 +168,8 @@ pub fn part2(input: &str, worker_count: usize, base_task_time: u32) -> u32 {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
-    const TEST_INPUT: &'static str = include_str!("test_input");
+    const INPUT: &str = include_str!("input");
+    const TEST_INPUT: &str = include_str!("test_input");
 
     #[test]
     fn part1_works() {

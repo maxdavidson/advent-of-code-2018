@@ -1,4 +1,4 @@
-fn reacts(a: &char, b: &char) -> bool {
+fn reacts(a: char, b: char) -> bool {
     a.is_ascii_lowercase() != b.is_ascii_lowercase() && a.eq_ignore_ascii_case(&b)
 }
 
@@ -7,7 +7,7 @@ fn collapse(input: &str) -> impl Iterator<Item = char> {
     let mut i: usize = 0;
 
     while i + 1 < chars.len() {
-        if reacts(&chars[i], &chars[i + 1]) {
+        if reacts(chars[i], chars[i + 1]) {
             chars.remove(i);
             chars.remove(i);
             if i != 0 {
@@ -44,7 +44,7 @@ pub fn part2(input: &str) -> usize {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {

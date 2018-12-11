@@ -80,7 +80,7 @@ pub fn part2(input: &str) -> usize {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {

@@ -17,6 +17,16 @@ enum Action {
     WakeUp { date: NaiveDateTime },
 }
 
+impl Action {
+    fn date(&self) -> NaiveDateTime {
+        match self {
+            Action::BeginShift { date, .. } => *date,
+            Action::FallAsleep { date } => *date,
+            Action::WakeUp { date } => *date,
+        }
+    }
+}
+
 #[derive(Debug)]
 enum State {
     Vacant,
@@ -48,11 +58,7 @@ fn compute_stats(input: &str) -> HashMap<ID, Vec<u32>> {
     let mut state = State::Vacant;
     let mut stats = HashMap::new();
 
-    let actions = actions_iter(input).sorted_by_key(|action| match action {
-        Action::BeginShift { date, .. } => date.clone(),
-        Action::FallAsleep { date } => date.clone(),
-        Action::WakeUp { date } => date.clone(),
-    });
+    let actions = actions_iter(input).sorted_by_key(|action| action.date());
 
     for action in actions {
         state = match (state, action) {
@@ -120,8 +126,8 @@ pub fn part2(input: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const TEST_INPUT: &'static str = include_str!("test_input");
-    const INPUT: &'static str = include_str!("input");
+    const TEST_INPUT: &str = include_str!("test_input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {
@@ -132,6 +138,6 @@ mod tests {
     #[test]
     fn part2_works() {
         assert_eq!(part2(TEST_INPUT), 4455);
-        assert_eq!(part2(INPUT), 134511);
+        assert_eq!(part2(INPUT), 134_511);
     }
 }

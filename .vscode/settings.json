@@ -2,4 +2,6 @@
   "editor.formatOnSave": true,
   "editor.rulers": [100],
   "lldb.executable": "rust-lldb",
+  "rust.clippy_preference": "opt-in",
+  "rust.wait_to_build": 250
 }
