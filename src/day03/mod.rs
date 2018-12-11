@@ -59,10 +59,8 @@ pub fn part2(input: &str) -> u32 {
 
     'claim: for (i, claim_a) in claims.iter().enumerate() {
         for (j, claim_b) in claims.iter().enumerate() {
-            if i != j {
-                if claim_a.overlaps(claim_b) {
-                    continue 'claim;
-                }
+            if i != j && claim_a.overlaps(claim_b) {
+                continue 'claim;
             }
         }
 
@@ -76,7 +74,7 @@ pub fn part2(input: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {

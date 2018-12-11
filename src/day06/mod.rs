@@ -95,7 +95,7 @@ pub fn part2(input: &str, region_size: i32) -> usize {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {

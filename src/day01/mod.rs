@@ -76,7 +76,7 @@ pub fn part2_v2(input: &str) -> String {
 mod tests {
     use super::*;
 
-    const INPUT: &'static str = include_str!("input");
+    const INPUT: &str = include_str!("input");
 
     #[test]
     fn part1_works() {
