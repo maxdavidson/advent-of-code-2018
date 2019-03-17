@@ -58,7 +58,7 @@ fn compute_stats(input: &str) -> HashMap<ID, Vec<u32>> {
     let mut state = State::Vacant;
     let mut stats = HashMap::new();
 
-    let actions = actions_iter(input).sorted_by_key(|action| action.date());
+    let actions = actions_iter(input).sorted_by_key(Action::date);
 
     for action in actions {
         state = match (state, action) {

@@ -149,7 +149,7 @@ impl Sample {
     }
 }
 
-pub fn parse_samples(input: &str) -> impl Iterator<Item = Sample> + '_ {
+fn parse_samples(input: &str) -> impl Iterator<Item = Sample> + '_ {
     lazy_static! {
       static ref PATTERN: Regex = Regex::new(r"Before:\s+\[(\d+),\s+(\d+),\s+(\d+),\s+(\d+)\]\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)+\s+After:\s+\[(\d+),\s+(\d+),\s+(\d+),\s+(\d+)\]").unwrap();
     }
@@ -178,7 +178,7 @@ pub fn parse_samples(input: &str) -> impl Iterator<Item = Sample> + '_ {
     })
 }
 
-pub fn parse_instructions(input: &str) -> impl Iterator<Item = [usize; 4]> + '_ {
+fn parse_instructions(input: &str) -> impl Iterator<Item = [usize; 4]> + '_ {
     lazy_static! {
         static ref PATTERN: Regex = Regex::new(r"(\d+)\s+(\d+)\s+(\d+)\s+(\d+)").unwrap();
     }
