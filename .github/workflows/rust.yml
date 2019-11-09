@@ -3,16 +3,56 @@ name: Rust
 on: [push]
 
 jobs:
-  test:
-    name: "Run tests on ${{ matrix.rust-channel }} channel"
+  lint:
+    name: Lint (${{ matrix.toolchain }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rust-channel: [stable, beta, nightly]
+        toolchain: [stable, beta, nightly]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Run tests
-      run: cargo test --verbose
-      env:
-        RUSTUP_TOOLCHAIN: ${{ matrix.rust-channel }}
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          profile: minimal
+          components: rustfmt, clippy
+          override: true
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all-targets --all-features -- -D warnings
+
+  test:
+    name: 'Test (${{ matrix.toolchain }})'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: [stable, beta, nightly]
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          profile: minimal
+          override: true
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
