@@ -7,16 +7,21 @@ trait Rotate<N> {
 impl<T> Rotate<isize> for VecDeque<T> {
     fn rotate(&mut self, n: isize) {
         if !self.is_empty() {
-            if n > 0 {
-                for _ in 0..n {
-                    let front = self.pop_front().unwrap();
-                    self.push_back(front);
+            use std::cmp::Ordering;
+            match n.cmp(&0) {
+                Ordering::Greater => {
+                    for _ in 0..n {
+                        let front = self.pop_front().unwrap();
+                        self.push_back(front);
+                    }
                 }
-            } else if n < 0 {
-                for _ in 0..-n {
-                    let back = self.pop_back().unwrap();
-                    self.push_front(back);
+                Ordering::Less => {
+                    for _ in 0..-n {
+                        let back = self.pop_back().unwrap();
+                        self.push_front(back);
+                    }
                 }
+                _ => {}
             }
         }
     }
