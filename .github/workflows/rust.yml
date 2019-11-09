@@ -25,18 +25,20 @@ jobs:
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
+        continue-on-error: ${{ matrix.toolchain == 'nightly' }}
         with:
           command: fmt
           args: --all -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
+        continue-on-error: ${{ matrix.toolchain == 'nightly' }}
         with:
           command: clippy
           args: --all-targets --all-features -- -D warnings
 
   test:
-    name: 'Test (${{ matrix.toolchain }})'
+    name: Test (${{ matrix.toolchain }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
