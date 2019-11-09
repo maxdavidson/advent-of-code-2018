@@ -60,5 +60,4 @@ mod tests {
     fn part2_works() {
         assert_eq!(part2(INPUT), 4934);
     }
-
 }
